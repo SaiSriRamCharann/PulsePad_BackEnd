@@ -20,7 +20,8 @@ app.use("/profile",profileRouter)
 app.use("/jurnols",jurnolRouter)
 DBconnect().then(()=>{
     console.log("DataBase Established Succesfully");
-    app.listen(7777,()=>{
+    const PORT = process.env.PORT || 7777;
+    app.listen(PORT,()=>{
         console.log("Port 7777 is listening")
     });
 
