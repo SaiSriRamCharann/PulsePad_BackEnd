@@ -1,0 +1,76 @@
+
+app.delete("/user",AuthorizationMiddleWare,async(req,res)=>{
+    const userEmail=req.body?.email;
+
+    try{
+        console.log(userEmail)
+         const result=await User.deleteOne({email:userEmail}).exec();
+         
+
+         if(result.deletedCount===0)
+         {
+            res.send("No user found to delete")
+         }
+         else{
+             res.send("deleted succesfully");
+
+         }
+
+       
+
+    }
+
+    catch(err){
+        res.status(404).send("error")
+    }
+
+   
+})
+
+app.get("/user", AuthorizationMiddleWare,async (req, res) => {
+  const userEmail = req.body.email;
+
+  try {
+    console.log(userEmail);
+    
+    const user = await User.find({ email: userEmail });
+    if (!user) {
+      res.status(404).send("User not found");
+    } else {
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+
+app.patch("/user",AuthorizationMiddleWare,async(req,res)=>{
+    try{
+            validateFun(req)
+            const data=req.body;
+            const userId=req.body?._id;
+
+            if(data?.name.length>50)
+            {
+                throw new Error("Name cant be more than 50 etters")
+            }
+            console.log(userId)
+             const updateUser=await User.findOneAndUpdate({_id:userId},{$set:req.body},{runValidators:true,new:true})
+
+             if(!updateUser)
+             {
+                res.send("No user found to update")
+             }
+             else{
+                res.send("updated");
+             }
+
+     }
+      catch(err){
+        res.status(404).send(err.message)
+    }
+     
+})
